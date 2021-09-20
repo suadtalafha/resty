@@ -16,18 +16,14 @@ class App extends React.Component {
     this.state = {
       data: null,
       requestParams: {},
+      result:[]
     };
   }
 
-  callApi = (requestParams) => {
+  callApi = (requestParams,getData) => {
     // mock output
-    const data = {
-      count: 2,
-      results: [
-        {name: 'fake thing 1', url: 'http://fakethings.com/1'},
-        {name: 'fake thing 2', url: 'http://fakethings.com/2'},
-      ],
-    };
+    const data = getData
+    
     this.setState({data, requestParams});
   }
 
