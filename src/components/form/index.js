@@ -1,85 +1,62 @@
-import { useState } from "react";
-import "./form.scss";
+import './form.scss';
+import { useState } from 'react';
 
-function Form(props) {
-  const [url, setUrl] = useState("");
-  const [request, setRequest] = useState("");
-  const [method, setMethod] = useState("get");
-  const [textArea, setTextArea] = useState(false);
+// import axios from 'axios';
 
-  const handleSubmit = async (e) => {
+function Form (props) {
+
+  const [method,setMethod]=useState('get')
+  const [url,setUrl]=useState('https://pokeapi.co/api/v2/pokemon')
+  const [reqBody,setReqBody]=useState({})
+
+ const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const data = {
-        method: method,
-        url: url,
-        request,
-      };
-      await props.handleApiCall(data);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
-  const handleURL = (e) => {
-    setUrl(e.target.value);
-  };
-
-  const handleRequest = (e) => {
-    let data = JSON.parse(e.target.value);
-    setRequest(data);
-  };
-
-  const handleGet = (e) => {
-    setMethod("get");
-    setTextArea(false);
-  };
-
-  const handlePost = (e) => {
-    setMethod("post");
-    setTextArea(true);
-  };
-
-  const handlePut = (e) => {
-    setMethod("put");
-    setTextArea(true);
-  };
-
-  const handleDelete = (e) => {
-    setMethod("delete");
-    setTextArea(false);
-  };
-
-  return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <label>
-          <span>URL: </span>
-          <input name="url" type="text" onChange={handleURL} />
-          <button type="submit" data-testid="submit">
-            GO!
-          </button>
-        </label>
-        <label className="methods">
-          <span id="get" onClick={handleGet}>
-            GET
-          </span>
-          <span id="post" onClick={handlePost}>
-            POST
-          </span>
-          <span id="put" onClick={handlePut}>
-            PUT
-          </span>
-          <span id="delete" onClick={handleDelete}>
-            DELETE
-          </span>
-        </label>
-        {textArea && (
-          <textarea rows="15" cols="35" onChange={handleRequest}></textarea>
-        )}
-      </form>
-    </>
-  );
+    const request = {
+      method: method,
+      url: url,
+      reqBody: reqBody
+    };
+    
+    props.HandeLAPI(request);
+  }
+// to set methode fo event value
+  const selectMethod=(e)=>{
+    setMethod(e.target.value)
+  }
+// input url from form 
+  const enterURL=(e)=>{
+    setUrl(e.target.value)
+  }
+  const EnterReqBody=(e)=>{
+    setReqBody(e.target.value)
+  }
+  
+    return (
+      <>
+        <form onSubmit={handleSubmit}>
+          <label className="methods" for='select' >
+            Choose The  Method
+          </label>
+          <select name="select" id='select' onChange={selectMethod}>
+            <option id="get" value='get'>GET</option>
+            <option id="post" value='post'>POST</option>
+            <option id="put" value='put'>PUT</option>
+            <option id="delete" value='delete'>DELETE</option>
+          </select>
+          <label  >
+            <span>URL: </span>
+            <input name='url' type='text' onChange={enterURL} />
+            <button type="submit">GO!</button>
+          </label>
+             {
+            (method=='post'||method=='put')?<textarea id="text" name="text" rows="4" cols="50" defaultValue='' 
+            onChange={EnterReqBody}>
+            </textarea>:''
+          }
+        </form>
+      </>
+    );
+  
 }
 
 export default Form;
