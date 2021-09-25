@@ -1,44 +1,93 @@
 import React from 'react';
-
+import { useState, useEffect, useReducer } from 'react';
 import './app.scss';
+import axios from 'axios';
 
-// Let's talk about using index.js and some other name in the component folder
-// There's pros and cons for each way of doing this ...
+import History from './History';
 import Header from './components/header';
 import Footer from './components/footer';
 import Form from './components/form';
 import Results from './components/results';
 
-class App extends React.Component {
+//  initialState to reducer
+const initialState = {
+  histArray: []
+}
+//function reducer  for new requester
+function reducer(state, action) {
+  switch (action.type) {
+    case 'Add request':
+      return {
+        ...state,
+        histArray: [...state.histArray, action.payload]
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: null,
-      requestParams: {},
-      result:[]
-    };
+
+      };
+    default:
+      return state;
   }
 
-  callApi = (requestParams,getData) => {
-    // mock output
-    const data = getData
-    
-    this.setState({data, requestParams});
+}
+
+
+
+function App() {
+  // use Reducer to store request API 
+  const [state, dispatch] = useReducer(reducer, initialState)
+  
+  const [data, setdata] = useState(null);
+  const [requestParams, setrequestParams] = useState({});
+
+  //function to store information array
+  function addNewHistory(info) {
+
+
+    return {
+      type: 'Add request',
+      payload: { info }
+    }
+
   }
 
-  render() {
-    return (
-      <React.Fragment>
-        <Header />
-        <div>Request Method: {this.state.requestParams.method}</div>
-        <div>URL: {this.state.requestParams.url}</div>
-        <Form handleApiCall={this.callApi} />
-        <Results data={this.state.data} />
-        <Footer />
-      </React.Fragment>
-    );
+  //to deal with API
+  const HandeLAPI = (reqDats) => {
+
+    setrequestParams(reqDats);
   }
+
+  useEffect(() => {
+    async function getApiData() {
+      console.log(requestParams)
+      if (requestParams.url) {
+        const { url, method, reqBody } = requestParams
+
+        const data = await axios.get(url);
+        console.log(data.data);
+        setdata(data)
+        //dispatch to store requestParams in the array which we decleare
+        dispatch(addNewHistory(requestParams));
+      }
+    }
+    getApiData();
+  }, [requestParams])
+
+
+  return (
+
+    <React.Fragment>
+      <Header />
+      {console.log('historyData', state.histArray)}
+      <div>Request Method: {requestParams.method}</div>
+      <div>URL: {requestParams.url}</div>
+     
+      <Form HandeLAPI={HandeLAPI} />
+      <History addNewHistory={state.histArray} />
+      <Results data={data} />
+
+      <Footer />
+    </React.Fragment>
+  );
+
 }
 
 export default App;

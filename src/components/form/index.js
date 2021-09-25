@@ -1,8 +1,7 @@
-
 import './form.scss';
 import { useState } from 'react';
 
-import axios from 'axios';
+// import axios from 'axios';
 
 function Form (props) {
 
@@ -12,27 +11,23 @@ function Form (props) {
 
  const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = {
+    const request = {
       method: method,
       url: url,
       reqBody: reqBody
     };
-    const getData = await axios({
-      method: method,
-      url: url,
-      reqBody: reqBody
-    });
-    props.handleApiCall(formData,getData);
+    
+    props.HandeLAPI(request);
   }
-
-  const itemSelect=(e)=>{
+// to set methode fo event value
+  const selectMethod=(e)=>{
     setMethod(e.target.value)
   }
-
-  const urlHandler=(e)=>{
+// input url from form 
+  const enterURL=(e)=>{
     setUrl(e.target.value)
   }
-  const reqBodyHandler=(e)=>{
+  const EnterReqBody=(e)=>{
     setReqBody(e.target.value)
   }
   
@@ -40,9 +35,9 @@ function Form (props) {
       <>
         <form onSubmit={handleSubmit}>
           <label className="methods" for='select' >
-            Select Your Method
+            Choose The  Method
           </label>
-          <select name="select" id='select' onChange={itemSelect}>
+          <select name="select" id='select' onChange={selectMethod}>
             <option id="get" value='get'>GET</option>
             <option id="post" value='post'>POST</option>
             <option id="put" value='put'>PUT</option>
@@ -50,13 +45,12 @@ function Form (props) {
           </select>
           <label  >
             <span>URL: </span>
-            <input name='url' type='text' onChange={urlHandler} />
+            <input name='url' type='text' onChange={enterURL} />
             <button type="submit">GO!</button>
           </label>
              {
-            (method=='post'||method=='put')?<textarea id="text" name="text" rows="4" cols="50" defaultValue=' {"object":"Write JSON For Post ,Put Method,,,
-            (For Test Use Method Get For :https://pokeapi.co/api/v2/pokemon)"}' 
-            onChange={reqBodyHandler}>
+            (method=='post'||method=='put')?<textarea id="text" name="text" rows="4" cols="50" defaultValue='' 
+            onChange={EnterReqBody}>
             </textarea>:''
           }
         </form>
